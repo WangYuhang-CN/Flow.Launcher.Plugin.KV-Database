@@ -22,7 +22,7 @@ WRAP_RECOVERY_KEY = "recovery_key"
 VALUE_AAD_PREFIX = b"kvdb-entry:"
 RECOVERY_AAD = b"kvdb-data-key:recovery:v1"
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 __author__ = "Wang.Yuhang"
 __description__ = "Flow Launcher plugin for KV Database"
 __license__ = "MIT"

@@ -6,7 +6,7 @@
     "Name": "KV Database",
     "Description": "Key-value database for quick lookup and updates in Flow Launcher",
     "Author": "Wang.Yuhang",
-    "Version": "0.1.0",
+    "Version": "1.0.0",
     "Language": "python",
     "Website": "https://github.com/WangYuhang-CN/Flow.Launcher.Plugin.KV-Database",
     "IcoPath": "images\\kv_database_logo.png",

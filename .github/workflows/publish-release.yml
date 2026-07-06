@@ -1,0 +1,96 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Read plugin version
+        id: version
+        shell: bash
+        run: |
+          version="$(python -c "import json; print(json.load(open('plugin.json', encoding='utf-8'))['Version'])")"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          if [ -s requirements.txt ]; then
+            python -m pip install --upgrade pip
+            python -m pip install -r requirements.txt -t lib
+          fi
+
+      - name: Build plugin package
+        shell: bash
+        run: |
+          rm -rf dist
+          mkdir -p dist/package
+
+          git archive HEAD | tar -x -C dist/package
+
+          if [ -d lib ]; then
+            cp -R lib dist/package/lib
+          fi
+
+          rm -rf \
+            dist/package/.github \
+            dist/package/.codex \
+            dist/package/.claude \
+            dist/package/.agents \
+            dist/package/.cursor \
+            dist/package/.continue \
+            dist/package/.windsurf \
+            dist/package/.roo \
+            dist/package/.kilocode \
+            dist/package/.qwen \
+            dist/package/__pycache__ \
+            dist/package/db \
+            dist/package/logs
+
+          find dist/package -type f \( \
+            -name "*.pyc" -o \
+            -name "*.pyo" -o \
+            -name "*.log" -o \
+            -name "*.tmp" -o \
+            -name "*.bak" -o \
+            -name "*.db" -o \
+            -name "*.sqlite" -o \
+            -name "*.sqlite3" -o \
+            -name "*.dump" -o \
+            -name ".env" -o \
+            -name ".env.*" -o \
+            -name "*.pem" -o \
+            -name "*.key" -o \
+            -name "*.p12" -o \
+            -name "*.pfx" -o \
+            -name "*.crt" \
+          \) -delete
+
+          (cd dist/package && zip -r "../../Flow.Launcher.Plugin.KV-Database.zip" .)
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          files: Flow.Launcher.Plugin.KV-Database.zip
+          make_latest: true
+          overwrite_files: true
+          fail_on_unmatched_files: true
