@@ -123,8 +123,7 @@ manager.
 
 Values are encrypted before they are stored in `db/kv.sqlite3`. The plugin
 generates a random data key, encrypts entry values with AES-GCM, and protects
-the data key with Windows DPAPI for the current Windows user. Existing plaintext
-databases are migrated automatically on first use.
+the data key with Windows DPAPI for the current Windows user.
 
 The normal user experience does not change: save with `; <KEY> <VALUE>`, search with
 `; <KEY>`, and press Enter to copy the value. There is no master password prompt
@@ -150,12 +149,6 @@ After copying `db/kv.sqlite3` to another user or PC, unlock it with:
 
 The plugin will use the recovery key once and then bind the database to the new
 Windows user with DPAPI.
-
-### Migration
-
-Older plaintext databases are migrated automatically when the plugin starts.
-The old `value` column is replaced with encrypted value data. After migration,
-value-content search is intentionally disabled; lookup is by key only.
 
 ### Security Limits
 
